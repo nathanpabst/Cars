@@ -30,10 +30,15 @@ namespace Cars
                     car.Combined
                 };
 
-            //could also use All() or Contains() extension methods to produce the same result
-            var result = cars.Any(c => c.Manufacturer == "Ford");
+            //using select many
+            var result = cars.SelectMany(c => c.Name)
+                             .OrderBy(c => c);
 
-            Console.WriteLine(result);
+            foreach (var character in result)
+            {               
+                Console.WriteLine(character);
+            }
+
 
             //extension method syntax with lambda expressions
             //var query2 =
@@ -41,10 +46,10 @@ namespace Cars
             //        .OrderByDescending(c => c.Combined)
             //        .ThenBy(c => c.Name);
 
-            foreach (var car in query.Take(10))
-            {
-                Console.WriteLine($"{car.Manufacturer} : {car.Name} : {car.Combined}");
-            }
+            //foreach (var car in query.Take(10))
+            //{
+            //    Console.WriteLine($"{car.Manufacturer} : {car.Name} : {car.Combined}");
+            //}
             Console.ReadLine();
         }
 
