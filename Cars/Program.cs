@@ -14,25 +14,33 @@ namespace Cars
             var cars = ProcessFile("fuel2.csv");
             var manufacturers = ProcessManufacturers("manufacturers.csv");
 
-            //extension method syntax
-            //var query = cars.OrderByDescending(c => c.Combined)
-            //                .ThenBy(c => c.Name);
+            //extension method syntax to join the csv files
+            var query2 = cars.Join(manufacturers,
+                                    c => c.Manufacturer,
+                                    m => m.Name, (c, m) => new
+                                    {
+                                        m.Headquarters,
+                                        c.Name,
+                                        c.Combined
+                                    })
+                                    .OrderByDescending(c => c.Combined)
+                                    .ThenBy(c => c.Name);
 
             //using query syntax && joining the csv files via linq
-            var query =
-                from car in cars
-                join manufacturer in manufacturers 
-                    on car.Manufacturer equals manufacturer.Name
-                orderby car.Combined descending, car.Name ascending
-                // creating an anonymous object
-                select new
-                {
-                    manufacturer.Headquarters,
-                    car.Name,
-                    car.Combined
-                };
+            //var query =
+            //    from car in cars
+            //    join manufacturer in manufacturers 
+            //        on car.Manufacturer equals manufacturer.Name
+            //    orderby car.Combined descending, car.Name ascending
+            //    // creating an anonymous object
+            //    select new
+            //    {
+            //        manufacturer.Headquarters,
+            //        car.Name,
+            //        car.Combined
+            //    };
 
-            foreach (var car in query.Take(10))
+            foreach (var car in query2.Take(10))
             {
                 Console.WriteLine($"{car.Headquarters} : {car.Name} : {car.Combined}");
             }
