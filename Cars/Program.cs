@@ -12,6 +12,7 @@ namespace Cars
         static void Main(string[] args)
         {
             var cars = ProcessFile("fuel2.csv");
+            var manufacturers = ProcessManufacturers("manufacturers.csv");
 
             //extension method syntax
             //var query = cars.OrderByDescending(c => c.Combined)
@@ -72,6 +73,24 @@ namespace Cars
 
             return query.ToList();
 
+        }
+
+        private static List<Manufacturer> ProcessManufacturers(string path)
+        {
+            var query =
+                File.ReadAllLines(path)
+                .Where(l => l.Length > 1)
+                .Select(l =>
+                {
+                    var columns = l.Split(',');
+                    return new Manufacturer
+                    {
+                        Name = columns[0],
+                        Headquarters = columns[1],
+                        Year = int.Parse(columns[2])
+                    };
+                });
+            return query.ToList();
         }
     }
 
