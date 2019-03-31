@@ -14,19 +14,30 @@ namespace Cars
             var cars = ProcessCars("fuel2.csv");
             var manufacturers = ProcessManufacturers("manufacturers.csv");
 
-            var query =
-                from manufacturer in manufacturers
-                join car in cars on manufacturer.Name equals car.Manufacturer
-                into carGroup
-                orderby manufacturer.Name
-                select new
+            //var query =
+            //    from manufacturer in manufacturers
+            //    join car in cars on manufacturer.Name equals car.Manufacturer
+            //    into carGroup
+            //    orderby manufacturer.Name
+            //    select new
+            //    {
+            //        Manufacturer = manufacturer,
+            //        Cars = carGroup
+            //    } into result
+            //    group result by result.Manufacturer.Headquarters;
+
+            //using extension method syntax
+            var query2 =
+                manufacturers.GroupJoin(cars, m => m.Name, c => c.Manufacturer,
+                (m, g) =>
+                new
                 {
-                    Manufacturer = manufacturer,
-                    Cars = carGroup
-                } into result
-                group result by result.Manufacturer.Headquarters;
-                           
-            foreach (var group in query)
+                    Manufacturer = m,
+                    Cars = g
+                })
+                .GroupBy(m => m.Manufacturer.Headquarters);
+
+            foreach (var group in query2)
             {
                 Console.WriteLine($"{group.Key}");
                 foreach (var car in group.SelectMany(g => g.Cars)
