@@ -8,59 +8,27 @@ using System.Threading.Tasks;
 namespace Cars
 {
     class Program
-    { 
+    {
         static void Main(string[] args)
         {
-            var cars = ProcessFile("fuel2.csv");
+            var cars = ProcessCars("fuel2.csv");
             var manufacturers = ProcessManufacturers("manufacturers.csv");
 
-            //extension method syntax to join the csv files
-            //var query2 = cars.Join(manufacturers,
-            //                        c => new { c.Manufacturer, c.Year },
-            //                        m => new { Manufacturer = m.Name, m.Year }, 
-            //                           (c, m) => new
-            //                        {
-            //                            m.Headquarters,
-            //                            c.Name,
-            //                            c.Combined
-            //                        })
-            //                        .OrderByDescending(c => c.Combined)
-            //                        .ThenBy(c => c.Name);
-
-            //using query syntax && joining the csv files via linq
             var query =
                 from car in cars
-                join manufacturer in manufacturers
-                    on new { car.Manufacturer, car.Year } 
-                    equals 
-                    new { Manufacturer = manufacturer.Name, manufacturer.Year }
-                orderby car.Combined descending, car.Name ascending
-                // creating an anonymous object
-                select new
-                {
-                    manufacturer.Headquarters,
-                    car.Name,
-                    car.Combined
-                };
+                group car by car.Manufacturer;
 
-            foreach (var car in query.Take(10))
+            foreach (var result in query)
             {
-                Console.WriteLine($"{car.Headquarters} : {car.Name} : {car.Combined}");
+                Console.WriteLine($"{result.Key} has {result.Count()} cars");
             }
+
             Console.ReadLine();
         }
 
-        private static List<Car> ProcessFile(string path)
+        private static List<Car> ProcessCars(string path)
         {
-            //using query syntax
-            //var query =
-            //    from line in File.ReadAllLines(path).Skip(1)
-            //    where line.Length > 1
-            //    select Car.ParseFromCsv(line);
-
-            //return query.ToList();
-
-            //using extension method syntax
+            
             var query =
                 File.ReadAllLines(path)
                 .Skip(1)
