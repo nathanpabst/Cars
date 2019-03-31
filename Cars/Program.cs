@@ -18,9 +18,13 @@ namespace Cars
                 from car in cars
                 group car by car.Manufacturer;
 
-            foreach (var result in query)
+            foreach (var group in query)
             {
-                Console.WriteLine($"{result.Key} has {result.Count()} cars");
+                Console.WriteLine(group.Key);
+                foreach (var car in group.OrderByDescending(c => c.Combined).Take(2))
+                {
+                    Console.WriteLine($"\t{car.Name} : {car.Combined}");
+                }
             }
 
             Console.ReadLine();
