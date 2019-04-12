@@ -13,15 +13,17 @@ namespace Cars
         static void Main(string[] args)
         {
             CreateXml();
-            //QueryXml();
+            QueryXml();
         }
 
         private static void QueryXml()
         {
+            var ns = (XNamespace)"http://pluralsight.com/cars/2016";
+            var ex = (XNamespace)"http://pluralsight.com/cars/2016/ex";
             var document = XDocument.Load("fuel.xml");
 
             var query =
-                from element in document.Element("Cars").Elements("Car")
+                from element in document.Element(ns + "Cars").Elements(ex + "Car")
                 where element.Attribute("Manufacturer").Value == "BMW"
                 select element.Attribute("Name").Value;
 
@@ -51,6 +53,9 @@ namespace Cars
                                 new XAttribute("Combined", record.Combined),
                                 new XAttribute("Manufacturer", record.Manufacturer))
              );
+
+            //prefixing the namespace to abbreviate the Xmlns link. Adds the 'ex' prefix to each car instead of a longer link at the end of each line
+            cars.Add(new XAttribute(XNamespace.Xmlns + "ex", ex));
 
             document.Add(cars);
             document.Save("fuel.xml");
