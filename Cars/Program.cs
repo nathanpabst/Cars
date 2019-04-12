@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,34 +12,23 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            var cars = ProcessCars("fuel2.csv");
-            var manufacturers = ProcessManufacturers("manufacturers.csv");
+            var records = ProcessCars("fuel2.csv");
 
-            var query =
-                from car in cars
-                group car by car.Manufacturer into carGroup
-                select new
-                {
-                    Name = carGroup.Key,
-                    Max = carGroup.Max(c => c.Combined),
-                    Min = carGroup.Min(c => c.Combined),
-                    Avg = carGroup.Average(c => c.Combined)
-                } into result
-                orderby result.Max descending
-                select result;
-                
+            var document = new XDocument();
+            var cars = new XElement("Cars");
 
-            
-            foreach (var result in query)
+            foreach (var record in records)
             {
-                Console.WriteLine($"{result.Name}");
-                Console.WriteLine($"\t Max: {result.Max}");
-                Console.WriteLine($"\t Min: {result.Min}");
-                Console.WriteLine($"\t Avg: {result.Avg}");
+                var car = new XElement("Car");
+                var name = new XElement("Name", record.Name);
+                var combined = new XElement("Combined", record.Combined);
 
+                cars.Add(car);
             }
 
-            Console.ReadLine();
+            document.Add(cars);
+            document.Save("fuel.xml");
+            
         }
 
         private static List<Car> ProcessCars(string path)
