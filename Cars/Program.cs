@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.IO;
+using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -11,44 +12,23 @@ namespace Cars
     {
         static void Main(string[] args)
         {
-            var cars = ProcessCars("fuel2.csv");
-            var manufacturers = ProcessManufacturers("manufacturers.csv");
+            var records = ProcessCars("fuel2.csv");
 
-            //var query =
-            //    from manufacturer in manufacturers
-            //    join car in cars on manufacturer.Name equals car.Manufacturer
-            //    into carGroup
-            //    orderby manufacturer.Name
-            //    select new
-            //    {
-            //        Manufacturer = manufacturer,
-            //        Cars = carGroup
-            //    } into result
-            //    group result by result.Manufacturer.Headquarters;
+            var document = new XDocument();
+            var cars = new XElement("Cars");
 
-            //using extension method syntax
-            var query2 =
-                manufacturers.GroupJoin(cars, m => m.Name, c => c.Manufacturer,
-                (m, g) =>
-                new
-                {
-                    Manufacturer = m,
-                    Cars = g
-                })
-                .GroupBy(m => m.Manufacturer.Headquarters);
-
-            foreach (var group in query2)
+            foreach (var record in records)
             {
-                Console.WriteLine($"{group.Key}");
-                foreach (var car in group.SelectMany(g => g.Cars)
-                    .OrderByDescending(c => c.Combined)
-                    .Take(3))
-                {
-                    Console.WriteLine($"\t{car.Name} : {car.Combined}");
-                }
+                var car = new XElement("Car");
+                var name = new XElement("Name", record.Name);
+                var combined = new XElement("Combined", record.Combined);
+
+                cars.Add(car);
             }
 
-            Console.ReadLine();
+            document.Add(cars);
+            document.Save("fuel.xml");
+            
         }
 
         private static List<Car> ProcessCars(string path)
