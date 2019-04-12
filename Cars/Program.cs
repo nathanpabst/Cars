@@ -13,7 +13,7 @@ namespace Cars
         static void Main(string[] args)
         {
             CreateXml();
-            QueryXml();
+            //QueryXml();
         }
 
         private static void QueryXml()
@@ -33,17 +33,20 @@ namespace Cars
             Console.ReadLine();
         }
 
-        //refactored in VS: Edit, Refactor, Extract
+        //working with XML namespaces
         private static void CreateXml()
         {
             var records = ProcessCars("fuel2.csv");
 
+            var ns = (XNamespace)"http://pluralsight.com/cars/2016";
+            var ex = (XNamespace)"http://pluralsight.com/cars/2016/ex";
+
             var document = new XDocument();
 
             //alt approach to the foreach loop using functional construction, linq query, and projection inside the constructor of an XElement
-            var cars = new XElement("Cars",
+            var cars = new XElement(ns + "Cars",
                 from record in records
-                select new XElement("Car",
+                select new XElement(ex + "Car",
                                 new XAttribute("Name", record.Name),
                                 new XAttribute("Combined", record.Combined),
                                 new XAttribute("Manufacturer", record.Manufacturer))
