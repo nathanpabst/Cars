@@ -17,11 +17,15 @@ namespace Cars
             var document = new XDocument();
             var cars = new XElement("Cars");
 
+            //constructing an element-oriented xml file
             foreach (var record in records)
             {
                 var car = new XElement("Car");
                 var name = new XElement("Name", record.Name);
                 var combined = new XElement("Combined", record.Combined);
+
+                car.Add(name);
+                car.Add(combined);
 
                 cars.Add(car);
             }
