@@ -15,23 +15,33 @@ namespace Cars
             var records = ProcessCars("fuel2.csv");
 
             var document = new XDocument();
-            var cars = new XElement("Cars");
 
-            foreach (var record in records)
-            {
-                var car = new XElement("Car");
-                var name = new XAttribute("Name", record.Name);
-                var combined = new XAttribute("Combined", record.Combined);
-
-                car.Add(name);
-                car.Add(combined);
-
-                cars.Add(car);
-            }
+            //alt approach to the foreach loop using functional construction, linq query, and projection inside the constructor of an XElement
+            var cars = new XElement("Cars",            
+                from record in records
+                select new XElement("Car",
+                                new XAttribute("Name", record.Name),
+                                new XAttribute("Combined", record.Combined),
+                                new XAttribute("Manufacturer", record.Manufacturer))
+             );
 
             document.Add(cars);
             document.Save("fuel.xml");
-            
+
+            //possibly a more explicit/readable approach...
+            //foreach (var record in records)
+            //{               
+            //    var car = new XElement("Car", 
+            //                    new XAttribute("Name", record.Name),
+            //                    new XAttribute("Combined", record.Combined),
+            //                    new XAttribute("Manufacturer", record.Manufacturer));
+
+            //    cars.Add(car);
+            //}
+
+            //document.Add(cars);
+            //document.Save("fuel.xml");
+
         }
 
         private static List<Car> ProcessCars(string path)
