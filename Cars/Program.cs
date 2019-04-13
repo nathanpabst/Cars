@@ -25,18 +25,21 @@ namespace Cars
 
             db.Database.Log = Console.WriteLine;
 
-            //using IQueryable to translate code into efficient SQL. IEnumerable code executes from memory
             var query =
-                db.Cars.Where(c => c.Manufacturer=="BMW")
-                    .OrderByDescending(c => c.Combined)
-                    .ThenBy(c => c.Name)
-                    .Take(10);
+                db.Cars.GroupBy(c => c.Manufacturer)
+                    .Select(g => new
+                    {
+                        Name = g.Key,
+                        Cars = g.OrderByDescending(c => c.Combined).Take(2)
+                    });
 
-            Console.WriteLine(query.Count());
-
-            foreach (var car in query)
+            foreach (var group in query)
             {
-                Console.WriteLine($"{car.Name} : {car.Combined}");
+                Console.WriteLine(group.Name);
+                foreach (var car in group.Cars)
+                {
+                    Console.WriteLine($"\t{car.Name} : {car.Combined}");
+                }
             }
             Console.ReadLine();
         }
