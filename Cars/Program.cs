@@ -15,35 +15,24 @@ namespace Cars
         static void Main(string[] args)
         {
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
-            //InsertData();
-            //QueryData();
-
-            //entity framework inspects and translates the linq commands into SQL statements by using an IQueryable Expression
-            //Expressions are not executable code. use the .Compile 
-
-            Func<int, int> square = x => x * x;
-            Expression<Func<int, int, int>> add = (x, y) => x + y;
-            Func<int, int, int> addI = add.Compile();
-
-            var result = addI(3, 5);
-
-            Console.WriteLine(addI);
-            //var result = add(3, 5);
-            //Console.WriteLine(result);
-
-            Console.ReadLine();
+            InsertData();
+            QueryData();
         }
 
         private static void QueryData()
         {
             var db = new CarDb();
-            //using ext. method syntax
 
+            db.Database.Log = Console.WriteLine;
+
+            //using IQueryable to translate code into efficient SQL. IEnumerable code executes from memory
             var query =
                 db.Cars.Where(c => c.Manufacturer=="BMW")
                     .OrderByDescending(c => c.Combined)
                     .ThenBy(c => c.Name)
                     .Take(10);
+
+            Console.WriteLine(query.Count());
 
             foreach (var car in query)
             {
