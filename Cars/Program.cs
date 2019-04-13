@@ -20,7 +20,19 @@ namespace Cars
 
         private static void QueryData()
         {
-            //throw new NotImplementedException();
+            var db = new CarDb();
+            //to ensure the data coming back is from the database
+            db.Database.Log = Console.WriteLine;
+
+            var query = from car in db.Cars
+                        orderby car.Combined descending, car.Name ascending
+                        select car;
+
+            foreach (var car in query.Take(10))
+            {
+                Console.WriteLine($"{car.Name} : {car.Combined}");
+            }
+            Console.ReadLine();
         }
 
         private static void InsertData()
