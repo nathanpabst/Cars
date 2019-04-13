@@ -6,6 +6,7 @@ using System.Xml.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data.Entity;
+using System.Linq.Expressions;
 
 namespace Cars
 {
@@ -14,8 +15,23 @@ namespace Cars
         static void Main(string[] args)
         {
             Database.SetInitializer(new DropCreateDatabaseIfModelChanges<CarDb>());
-            InsertData();
-            QueryData();
+            //InsertData();
+            //QueryData();
+
+            //entity framework inspects and translates the linq commands into SQL statements by using an IQueryable Expression
+            //Expressions are not executable code. use the .Compile 
+
+            Func<int, int> square = x => x * x;
+            Expression<Func<int, int, int>> add = (x, y) => x + y;
+            Func<int, int, int> addI = add.Compile();
+
+            var result = addI(3, 5);
+
+            Console.WriteLine(addI);
+            //var result = add(3, 5);
+            //Console.WriteLine(result);
+
+            Console.ReadLine();
         }
 
         private static void QueryData()
